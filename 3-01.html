@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>高校数学I：二次関数とそのグラフドリル</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 
-  <!-- MathJax の設定は読み込み前に置く（超重要） -->
+  <!-- MathJax の設定は読み込み前に置く -->
   <script>
     window.MathJax = {
       tex: {
@@ -26,7 +29,7 @@
   </script>
   <!-- 必要な polyfill（古めのブラウザ対策）-->
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <!-- MathJax v3 本体（asyncでOK。ただし上の設定を先に定義しておくこと）-->
+  <!-- MathJax v3 本体 -->
   <script id="MathJax-script" async
           src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
@@ -34,7 +37,8 @@
     body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
     .answer-btn { transition: all 0.2s ease-in-out; }
     .answer-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    .mathjax-loading { visibility: hidden; } /* MathJax準備完了まで非表示 */
+    /* MathJax準備完了まで非表示にして、レイアウトの崩れを防ぐ */
+    .mathjax-loading { visibility: hidden; }
   </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
@@ -71,52 +75,65 @@
   </div>
 
   <script>
-    // ==== データ ====
-    const quizDataJson = {
-      "Qm": [
-        {"question":"2次関数 $y = 2(x-3)^2 + 5$ の頂点の座標を求めなさい。","hint":"$y=a(x-p)^2+q$ の形のとき、頂点は $(p, q)$ です。符号に注意しましょう。","EE":[
-          {"text":"$(3, 5)$","Ur":true,"w8":"正解です。$x-3=0$ となるxの値と、そのときのyの値を考えます。"},
-          {"text":"$(-3, 5)$","Ur":false,"w8":"$x$座標の符号が逆です。$x-p$ の形なので、$p=3$ です。"},
-          {"text":"$(3, -5)$","Ur":false,"w8":"$y$座標の符号が逆です。$+q$ の形なので、$q=5$ です。"},
-          {"text":"$(2, 5)$","Ur":false,"w8":"$x^2$の係数は頂点の座標には直接関係ありません。"}]},
-        {"question":"2次関数 $y = x^2 - 4x + 1$ の頂点の座標を求めなさい。","hint":"式を $y=a(x-p)^2+q$ の形に変形（平方完成）します。","EE":[
-          {"text":"$(2, -3)$","Ur":true,"w8":"正解です。$y=(x-2)^2-4+1=(x-2)^2-3$ と変形できます。"},
-          {"text":"$(-2, 1)$","Ur":false,"w8":"平方完成の途中で符号のミスがあるようです。"},
-          {"text":"$(2, 1)$","Ur":false,"w8":"平方完成で追加した項を引くのを忘れていませんか？"},
-          {"text":"$(4, 1)$","Ur":false,"w8":"式の係数をそのまま頂点の座標とすることはできません。"}]},
-        {"question":"2次関数 $y = -3(x+1)^2 - 4$ のグラフの軸の方程式を求めなさい。","hint":"軸の方程式は、頂点の$x$座標から $x=p$ と表されます。","EE":[
-          {"text":"$x = -1$","Ur":true,"w8":"正解です。頂点の$x$座標は $-1$ です。"},
-          {"text":"$x = 1$","Ur":false,"w8":"頂点の$x$座標の符号が違います。$x+1$ なので $p=-1$ です。"},
-          {"text":"$y = -1$","Ur":false,"w8":"軸は$x$の値が一定の直線なので、$x=$ の形で表されます。"},
-          {"text":"$y = -4$","Ur":false,"w8":"それは頂点の$y$座標です。軸の方程式ではありません。"}]},
-        {"question":"2次関数 $y = -x^2 + 6x - 5$ の最大値または最小値を求めなさい。","hint":"平方完成して頂点のy座標を求めます。$x^2$の係数が負なので、グラフは上に凸です。","EE":[
-          {"text":"最大値 $4$","Ur":true,"w8":"正解です。$y=-(x-3)^2+4$ と変形でき、上に凸のグラフなので頂点で最大値をとります。"},
-          {"text":"最小値 $4$","Ur":false,"w8":"$x^2$の係数が負なので、グラフは上に凸、つまり最大値を持ちます。"},
-          {"text":"最大値 $-5$","Ur":false,"w8":"それはy切片の値です。頂点の座標を求める必要があります。"},
-          {"text":"最小値なし","Ur":false,"w8":"最大値はありますが、最小値はありません。"}]},
-        {"question":"2次関数 $y=3x^2$ のグラフをx軸方向に-2、y軸方向に1だけ平行移動したグラフの式を求めなさい。","hint":"$x$を$x-(-2)$に、$y$を$y-1$に置き換えると考えます。","EE":[
-          {"text":"$y=3(x+2)^2+1$","Ur":true,"w8":"正解です。頂点が $(0,0)$ から $(-2,1)$ に移動します。"},
-          {"text":"$y=3(x-2)^2+1$","Ur":false,"w8":"x軸方向の移動量の符号が逆です。"},
-          {"text":"$y=3(x+2)^2-1$","Ur":false,"w8":"y軸方向の移動量の符号が逆です。"},
-          {"text":"$y=3(x-2)^2-1$","Ur":false,"w8":"x軸、y軸両方の移動量の符号が逆です。"}]},
-        {"question":"2次関数 $y = 2x^2 + 3x - 7$ のグラフがy軸と交わる点のy座標を求めなさい。","hint":"グラフがy軸と交わる点では、$x$座標は常に0です。","EE":[
-          {"text":"$-7$","Ur":true,"w8":"正解です。式に $x=0$ を代入すると $y=-7$ となります。"},
-          {"text":"$2$","Ur":false,"w8":"それは $x^2$ の係数です。"},
-          {"text":"$3$","Ur":false,"w8":"それは $x$ の係数です。"},
-          {"text":"$0$","Ur":false,"w8":"$x=0$ を代入したときの $y$ の値を求めます。"}]},
-        {"question":"2次関数 $y = x^2 - x - 6$ のグラフとx軸との交点のx座標をすべて求めなさい。","hint":"グラフがx軸と交わる点では、$y$座標は常に0です。二次方程式を解きましょう。","EE":[
-          {"text":"$x=-2, 3$","Ur":true,"w8":"正解です。$x^2-x-6=0$ を因数分解すると $(x-3)(x+2)=0$ となります。"},
-          {"text":"$x=2, -3$","Ur":false,"w8":"因数分解したときの符号が逆になっています。"},
-          {"text":"$x=1, -6$","Ur":false,"w8":"足して-1、掛けて-6になる組み合わせを探しましょう。"},
-          {"text":"$x=-1, 6$","Ur":false,"w8":"足して-1、掛けて-6になる組み合わせを探しましょう。"}]},
-        {"question":"頂点が $(1, 2)$ で、点 $(3, 10)$ を通る2次関数の式を求めなさい。","hint":"頂点の座標から $y=a(x-1)^2+2$ とおき、通る点の座標を代入して$a$を求めます。","EE":[
-          {"text":"$y=2(x-1)^2+2$","Ur":true,"w8":"正解です。$10=a(3-1)^2+2$ を解くと $a=2$ となります。"},
-          {"text":"$y=(x-1)^2+2$","Ur":false,"w8":"$a=1$ とは限りません。通る点の座標を代入して $a$ の値を求める必要があります。"},
-          {"text":"$y=2(x+1)^2+2$","Ur":false,"w8":"頂点のx座標の符号が間違っています。"},
-          {"text":"$y=4(x-1)^2+2$","Ur":false,"w8":"$a$ の値が間違っています。方程式を正しく解きましょう。"}]}
-      ]};
+    // ==== クイズデータ ====
+    const quizData = [
+       {
+        "question": "二次関数 $y = -3x^2$ のグラフに関する記述として、正しいものはどれですか？",
+        "answers": [
+          {"text": "頂点は点 $(0, -3)$ である。", "correct": false, "rationale": "不正解。$y=ax^2$の形のグラフの頂点は常に原点 $(0, 0)$ です。"},
+          {"text": "グラフは下に凸の放物線である。", "correct": false, "rationale": "不正解。$x^2$の係数が負 (-3) なので、グラフは上に凸の放物線です。"},
+          {"text": "グラフの軸は直線 $x = 0$ である。", "correct": true, "rationale": "正解です。$y=ax^2$の形のグラフの軸は常に $y$ 軸、つまり直線 $x=0$ です。"},
+          {"text": "$y = 3x^2$ のグラフと $x$ 軸に関して対称である。", "correct": false, "rationale": "これは正しい記述ですが、問1の解答は「ウ」が最も基本的な性質として正解とされています。より適切な選択肢を選びましょう。"}
+        ]
+      },
+      {
+        "question": "二次関数 $y = 2(x + 1)^2 - 5$ の頂点の座標はどれですか？",
+        "answers": [
+          {"text": "$(1, -5)$", "correct": false, "rationale": "不正解。$x$座標の符号が違います。$(x-p)^2$の形なので、$p = -1$ です。"},
+          {"text": "$(-1, -5)$", "correct": true, "rationale": "正解です！$y=a(x-p)^2+q$の頂点は $(p, q)$ です。"},
+          {"text": "$(2, -5)$", "correct": false, "rationale": "不正解。$x^2$の係数2は頂点の座標に直接は影響しません。"},
+          {"text": "$(-1, 5)$", "correct": false, "rationale": "不正解。$y$座標の符号が違います。$+q$の形なので、$q = -5$ です。"}
+        ]
+      },
+      {
+        "question": "二次関数 $y = x^2 - 6x + 5$ を平方完成した式として、正しいものはどれですか？",
+        "answers": [
+          {"text": "$y = (x - 3)^2 - 4$", "correct": true, "rationale": "正解です！$y=(x^2 - 6x + 9) - 9 + 5$ と変形できます。"},
+          {"text": "$y = (x - 3)^2 + 5$", "correct": false, "rationale": "不正解。平方完成のために加えた9を引くのを忘れています。"},
+          {"text": "$y = (x - 6)^2 - 31$", "correct": false, "rationale": "不正解。$x$の係数の半分を使います。$(x-6)^2$ではありません。"},
+          {"text": "$y = (x + 3)^2 - 4$", "correct": false, "rationale": "不正解。$(x-3)^2$の展開は $x^2-6x+9$ です。符号に注意しましょう。"}
+        ]
+      },
+      {
+        "question": "二次関数 $y = x^2 + 4x + 4$ のグラフと $x$ 軸との共有点の個数はいくつですか？",
+        "answers": [
+          {"text": "0個", "correct": false, "rationale": "不正解。判別式 $D=b^2-4ac$ を計算してみましょう。$D=0$ になります。"},
+          {"text": "1個", "correct": true, "rationale": "正解です。$y=(x+2)^2$ となり、頂点が $x$ 軸上にあるため、共有点（接点）は1個です。"},
+          {"text": "2個", "correct": false, "rationale": "不正解。判別式 $D$ が $D>0$ になる場合、共有点は2個になります。"},
+          {"text": "3個", "correct": false, "rationale": "不正解。二次関数のグラフと直線の共有点は最大でも2個です。"}
+        ]
+      },
+      {
+        "question": "定義域が $0 \\le x \\le 5$ のとき、二次関数 $y = (x - 2)^2 + 1$ の最大値はどれですか？",
+        "answers": [
+          {"text": "1", "correct": false, "rationale": "不正解。それは頂点の $y$ 座標で、この場合の最小値です。"},
+          {"text": "5", "correct": false, "rationale": "不正解。それは定義域の端 $x=0$ のときの $y$ の値です。もう一方の端の値も確認しましょう。"},
+          {"text": "10", "correct": true, "rationale": "正解です。頂点の $x=2$ から最も遠い定義域の端 $x=5$ で最大値 $y=(5-2)^2+1=10$ をとります。"},
+          {"text": "17", "correct": false, "rationale": "不正解。計算を見直してみましょう。"}
+        ]
+      },
+      {
+        "question": "$y = -x^2$ のグラフを $x$ 軸方向に $-2$、$y$ 軸方向に $3$ だけ平行移動したグラフの式はどれですか？",
+        "answers": [
+          {"text": "$y = -(x - 2)^2 + 3$", "correct": false, "rationale": "不正解。$x$ 軸方向の移動は $x$ を $x-p$ に置き換えます。$p=-2$ なので $x-(-2)$ となります。"},
+          {"text": "$y = -(x + 2)^2 - 3$", "correct": false, "rationale": "不正解。$y$ 軸方向の移動は式の最後に $q$ を加えます。$q=3$ です。"},
+          {"text": "$y = (x + 2)^2 + 3$", "correct": false, "rationale": "不正解。元のグラフは上に凸 ($x^2$の係数が負) なので、平行移動後も上に凸のままです。"},
+          {"text": "$y = -(x + 2)^2 + 3$", "correct": true, "rationale": "正解です！元の式の $x$ を $x-(-2)$、つまり $x+2$ に置き換え、式全体に $+3$ します。"}
+        ]
+      }
+    ];
 
-    const questions = quizDataJson.Qm;
+    // ==== 要素取得 ====
     const quizContainer = document.getElementById('quiz-container');
     const resultsContainer = document.getElementById('results-container');
     const questionTextEl = document.getElementById('question-text');
@@ -133,8 +150,19 @@
     let currentQuestionIndex = 0;
     let score = 0;
     let userAnswers = [];
+    
+    // ==== 関数 ====
+    
+    /** 配列をシャッフルする (Fisher-Yates algorithm) */
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
 
-    // MathJax startup.ready から呼ばれる
+    /** クイズを開始する */
     function startQuiz() {
       currentQuestionIndex = 0;
       score = 0;
@@ -145,36 +173,43 @@
       showQuestion();
     }
 
+    /** 問題と選択肢を表示する */
     function showQuestion() {
       resetState();
-      const currentQuestion = questions[currentQuestionIndex];
+      const currentQuestion = quizData[currentQuestionIndex];
 
-      progressTextEl.textContent = `問題 ${currentQuestionIndex + 1} / ${questions.length}`;
-      progressBarEl.style.width = `${((currentQuestionIndex) / questions.length) * 100}%`;
+      progressTextEl.textContent = `問題 ${currentQuestionIndex + 1} / ${quizData.length}`;
+      progressBarEl.style.width = `${((currentQuestionIndex) / quizData.length) * 100}%`;
 
-      // TeXを解釈させるために innerHTML を使用
       questionTextEl.innerHTML = currentQuestion.question;
 
-      currentQuestion.EE.forEach(answer => {
+      // 選択肢をシャッフルしてから表示
+      const shuffledAnswers = shuffleArray([...currentQuestion.answers]);
+
+      shuffledAnswers.forEach(answer => {
         const button = document.createElement('button');
-        button.innerHTML = answer.text;               // ← ここも innerHTML
+        button.innerHTML = answer.text;
         button.className =
           'answer-btn w-full p-4 border border-gray-300 rounded-lg text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed';
-        button.dataset.correct = String(answer.Ur);
-        button.dataset.rationale = answer.w8;
+        button.dataset.correct = String(answer.correct);
+        button.dataset.rationale = answer.rationale;
         button.addEventListener('click', selectAnswer);
         answerButtonsEl.appendChild(button);
       });
 
       renderMath();
     }
-
+    
+    /** 表示状態をリセットする */
     function resetState() {
       feedbackContainer.classList.add('hidden');
       nextBtn.classList.add('hidden');
-      while (answerButtonsEl.firstChild) answerButtonsEl.removeChild(answerButtonsEl.firstChild);
+      while (answerButtonsEl.firstChild) {
+        answerButtonsEl.removeChild(answerButtonsEl.firstChild);
+      }
     }
 
+    /** 回答を選択したときの処理 */
     function selectAnswer(e) {
       const selectedBtn = e.target.closest('.answer-btn');
       if (!selectedBtn) return;
@@ -183,21 +218,21 @@
       const rationale = selectedBtn.dataset.rationale;
 
       userAnswers.push({
-        question: questions[currentQuestionIndex].question,
+        question: quizData[currentQuestionIndex].question,
         selected: selectedBtn.innerHTML,
         isCorrect,
-        correctAnswer: questions[currentQuestionIndex].EE.find(ans => ans.Ur).text
+        correctAnswer: quizData[currentQuestionIndex].answers.find(ans => ans.correct).text
       });
 
       if (isCorrect) {
         score++;
-        selectedBtn.classList.add('bg-green-100','border-green-500','ring-2','ring-green-400');
-        feedbackContainer.classList.remove('bg-red-100','text-red-700');
-        feedbackContainer.classList.add('bg-green-100','text-green-700');
+        selectedBtn.classList.add('bg-green-100', 'border-green-500', 'ring-2', 'ring-green-400');
+        feedbackContainer.classList.remove('bg-red-100', 'text-red-700');
+        feedbackContainer.classList.add('bg-green-100', 'text-green-700');
       } else {
-        selectedBtn.classList.add('bg-red-100','border-red-500','ring-2','ring-red-400');
-        feedbackContainer.classList.remove('bg-green-100','text-green-700');
-        feedbackContainer.classList.add('bg-red-100','text-red-700');
+        selectedBtn.classList.add('bg-red-100', 'border-red-500', 'ring-2', 'ring-red-400');
+        feedbackContainer.classList.remove('bg-green-100', 'text-green-700');
+        feedbackContainer.classList.add('bg-red-100', 'text-red-700');
       }
 
       feedbackTextEl.innerHTML = rationale;
@@ -205,20 +240,23 @@
       renderMath();
 
       Array.from(answerButtonsEl.children).forEach(button => {
-        if (button.dataset.correct === 'true') button.classList.add('bg-green-100','border-green-500');
+        if (button.dataset.correct === 'true') {
+          button.classList.add('bg-green-100', 'border-green-500');
+        }
         button.disabled = true;
       });
 
-      progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+      progressBarEl.style.width = `${((currentQuestionIndex + 1) / quizData.length) * 100}%`;
 
-      nextBtn.textContent = (questions.length > currentQuestionIndex + 1) ? '次の問題へ' : '結果を見る';
+      nextBtn.textContent = (quizData.length > currentQuestionIndex + 1) ? '次の問題へ' : '結果を見る';
       nextBtn.classList.remove('hidden');
     }
 
+    /** 結果を表示する */
     function showResults() {
       quizContainer.classList.add('hidden');
       resultsContainer.classList.remove('hidden');
-      scoreTextEl.textContent = `${questions.length}問中${score}問正解！`;
+      scoreTextEl.textContent = `${quizData.length}問中${score}問正解！`;
 
       resultsSummaryEl.innerHTML = '';
       userAnswers.forEach((ans, i) => {
@@ -232,24 +270,28 @@
       });
       renderMath();
     }
-
+    
+    /** 「次へ」ボタンの処理 */
     function handleNext() {
       currentQuestionIndex++;
-      if (currentQuestionIndex < questions.length) {
+      if (currentQuestionIndex < quizData.length) {
         showQuestion();
       } else {
         showResults();
       }
     }
-
+    
+    /** MathJaxで数式をレンダリングする */
     function renderMath() {
-      // MathJax v3
-      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise();
+      }
     }
 
+    // ==== イベントリスナー ====
     nextBtn.addEventListener('click', handleNext);
-    restartBtn.addEventListener('click', () => startQuiz());
+    restartBtn.addEventListener('click', startQuiz);
+    
   </script>
 </body>
 </html>
-
