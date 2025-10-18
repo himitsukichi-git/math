@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>高校数学I：一次不等式ドリル</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 
-  <!-- MathJax の設定は読み込み前に置く（超重要） -->
+  <!-- MathJax の設定は読み込み前に置く -->
   <script>
     window.MathJax = {
       tex: {
@@ -26,7 +29,7 @@
   </script>
   <!-- 必要な polyfill（古めのブラウザ対策）-->
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <!-- MathJax v3 本体（asyncでOK。ただし上の設定を先に定義しておくこと）-->
+  <!-- MathJax v3 本体 -->
   <script id="MathJax-script" async
           src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
@@ -134,6 +137,15 @@
     let score = 0;
     let userAnswers = [];
 
+    /** 配列をシャッフルする (Fisher-Yates algorithm) */
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
     // MathJax startup.ready から呼ばれる
     function startQuiz() {
       currentQuestionIndex = 0;
@@ -155,9 +167,12 @@
       // TeXを解釈させるために innerHTML を使用
       questionTextEl.innerHTML = currentQuestion.question;
 
-      currentQuestion.EE.forEach(answer => {
+      // 選択肢をシャッフルしてから表示
+      const shuffledAnswers = shuffleArray([...currentQuestion.EE]);
+
+      shuffledAnswers.forEach(answer => {
         const button = document.createElement('button');
-        button.innerHTML = answer.text;               // ← ここも innerHTML
+        button.innerHTML = answer.text;
         button.className =
           'answer-btn w-full p-4 border border-gray-300 rounded-lg text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed';
         button.dataset.correct = String(answer.Ur);
