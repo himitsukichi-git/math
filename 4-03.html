@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>高校数学I：仮説検定の考え方ドリル</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- MathJax の設定は読み込み前に置く -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[','\\]']]
+      },
+      startup: {
+        ready: () => {
+          // 既定の初期化
+          MathJax.startup.defaultReady();
+          // クイズ本体を表示して開始
+          document.getElementById('quiz-container')?.classList.remove('mathjax-loading');
+          startQuiz();
+        }
+      }
+    };
+  </script>
+  <!-- 必要な polyfill（古めのブラウザ対策）-->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <!-- MathJax v3 本体 -->
+  <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+    .answer-btn { transition: all 0.2s ease-in-out; }
+    .answer-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .mathjax-loading { visibility: hidden; } /* MathJax準備完了まで非表示 */
+  </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+  <div id="quiz-container" class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 md:p-8 mathjax-loading">
+    <div id="progress-container" class="flex justify-between items-center mb-4">
+      <h2 class="text-xl md:text-2xl font-bold text-gray-800">仮説検定の考え方ドリル</h2>
+      <div id="progress-text" class="text-sm font-semibold text-gray-600"></div>
+    </div>
+
+    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+      <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+    </div>
+
+    <div id="question-card">
+      <p id="question-text" class="text-lg md:text-xl text-gray-900 mb-6 min-h-[60px]"></p>
+      <div id="answer-buttons" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </div>
+
+    <div id="feedback-container" class="mt-6 p-4 rounded-lg text-center hidden">
+      <p id="feedback-text" class="font-semibold"></p>
+    </div>
+
+    <div class="mt-6 flex justify-end">
+      <button id="next-btn" class="hidden bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-200">次へ</button>
+    </div>
+  </div>
+
+  <div id="results-container" class="hidden w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 md:p-8 text-center">
+    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">終了！</h2>
+    <p id="score-text" class="text-xl text-gray-700 mb-6"></p>
+    <div id="results-summary" class="text-left space-y-4 mb-8"></div>
+    <button id="restart-btn" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition duration-200">もう一度挑戦する</button>
+  </div>
+
+  <script>
+    // ==== データ ====
+    const quizDataJson = {
+      "Qm": [
+        {"question":"仮説検定において、最初に立てる「否定したい仮説」のことを何と呼ぶか。","hint":"この仮説が正しくないと結論づけることを目指します。","EE":[
+          {"text":"帰無仮説","Ur":true,"w8":"正解です。帰無仮説は、統計的に棄却（否定）されることを期待して立てられる仮説です。"},
+          {"text":"対立仮説","Ur":false,"w8":"対立仮説は、帰無仮説が棄却されたときに採択される、主張したい内容の仮説です。"},
+          {"text":"統計的仮説","Ur":false,"w8":"帰無仮説と対立仮説はどちらも統計的仮説の一種です。"},
+          {"text":"有意仮説","Ur":false,"w8":"そのような用語は一般的には使われません。"}]},
+        {"question":"仮説検定において、主張したい内容を表す仮説のことを何と呼ぶか。","hint":"帰無仮説が棄却された場合に、こちらが正しいと判断されます。","EE":[
+          {"text":"対立仮説","Ur":true,"w8":"正解です。対立仮説は、研究者が証明したいことや、主張したいことを表す仮説です。"},
+          {"text":"帰無仮説","Ur":false,"w8":"帰無仮説は、否定される対象となる仮説です。"},
+          {"text":"証明仮説","Ur":false,"w8":"そのような用語は一般的には使われません。"},
+          {"text":"基本仮説","Ur":false,"w8":"そのような用語は一般的には使われません。"}]},
+        {"question":"「このコインは歪んでおらず、表が出る確率は0.5である」という主張を検定したい。この場合の帰無仮説として最も適切なものはどれか。","hint":"帰無仮説は「差がない」「効果がない」といった形で設定されることが多いです。","EE":[
+          {"text":"コインの表が出る確率は0.5である","Ur":true,"w8":"正解です。これが「差がない」状態であり、データによって棄却を目指す対象となります。"},
+          {"text":"コインの表が出る確率は0.5ではない","Ur":false,"w8":"これは対立仮説です。"},
+          {"text":"コインは歪んでいる","Ur":false,"w8":"これは対立仮説を言葉で表現したものです。"},
+          {"text":"表が多く出過ぎる","Ur":false,"w8":"これは観測結果であり、仮説ではありません。"}]},
+        {"question":"新しい薬の効果を確かめるための仮説検定で、「新薬に効果はない」という帰無仮説が立てられた。この帰無仮説が正しいにもかかわらず、誤って棄却してしまうことを何と呼ぶか。","hint":"本当は効果がないのに、「効果がある」と間違って結論づけてしまうことです。","EE":[
+          {"text":"第一種の過誤","Ur":true,"w8":"正解です。「あわてものの誤り」とも言われ、帰無仮説が真であるのに棄却してしまう誤りです。"},
+          {"text":"第二種の過誤","Ur":false,"w8":"第二種の過誤は、帰無仮説が偽であるのに棄却しない誤り（効果があるのに見逃す）です。"},
+          {"text":"有意水準","Ur":false,"w8":"有意水準は、第一種の過誤を犯す確率の上限値として検定の前に設定する基準です。"},
+          {"text":"P値","Ur":false,"w8":"P値は観測されたデータ以上に極端なデータが得られる確率です。"}]},
+        {"question":"仮説検定において、判断の基準としてあらかじめ設定しておく確率のことを何と呼ぶか。一般的に5%や1%が用いられる。","hint":"この確率よりも珍しいことが起きた場合に、「偶然とは考えにくい」と判断します。","EE":[
+          {"text":"有意水準","Ur":true,"w8":"正解です。記号αで表され、検定を行う前に決められます。"},
+          {"text":"信頼度","Ur":false,"w8":"信頼度は区間推定などで使われる用語で、少し意味合いが異なります。"},
+          {"text":"検出力","Ur":false,"w8":"検出力は、対立仮説が正しいときに、正しく帰無仮説を棄却できる確率のことです。"},
+          {"text":"P値","Ur":false,"w8":"P値はデータから計算される確率であり、あらかじめ設定するものではありません。"}]},
+        {"question":"仮説検定の結果、P値が0.03であった。有意水準を5%（0.05）とした場合、どのような結論になるか。","hint":"P値と有意水準の大小を比較して判断します。","EE":[
+          {"text":"帰無仮説を棄却し、対立仮説を採択する","Ur":true,"w8":"正解です。P値(0.03) < 有意水準(0.05) なので、帰無仮説は棄却されます。"},
+          {"text":"帰無仮説を採択する","Ur":false,"w8":"P値が有意水準より小さいので、帰無仮説は棄却されます。"},
+          {"text":"結論は出せない","Ur":false,"w8":"P値と有意水準を比較することで結論を出すことができます。"},
+          {"text":"有意水準を1%にして再計算する","Ur":false,"w8":"有意水準は検定の前に決めるものであり、結果を見てから変更してはいけません。"}]},
+        {"question":"「統計的に有意な差がある」という結論が得られた。この結論の正しい解釈はどれか。","hint":"「有意」という言葉の統計学的な意味を考えましょう。","EE":[
+          {"text":"観測された差は、偶然では起こりにくいと判断された","Ur":true,"w8":"正解です。帰無仮説のもとで、観測されたデータまたはそれ以上に極端なデータが得られる確率が非常に低いことを意味します。"},
+          {"text":"観測された差は、実社会において非常に重要である","Ur":false,"w8":"統計的に有意であっても、その差が実質的に重要かどうかは別の問題です。"},
+          {"text":"帰無仮説が絶対に間違っていることが証明された","Ur":false,"w8":"仮説検定は、確率に基づいて判断するものであり、絶対的な証明はできません。"},
+          {"text":"データに間違いがなかったことが確認された","Ur":false,"w8":"統計的な結論は、データの質とは別の問題です。"}]},
+        {"question":"コインを100回投げたところ、表が65回出た。「このコインは表が出やすい」と判断してよいか検定したい。このときの対立仮説として最も適切なものはどれか。","hint":"検定によって確かめたい、主張したい内容が対立仮説になります。","EE":[
+          {"text":"コインの表が出る確率は0.5より大きい","Ur":true,"w8":"正解です。これが「表が出やすい」という主張を数式で表したものであり、証明したい対立仮説となります。"},
+          {"text":"コインの表が出る確率は0.5である","Ur":false,"w8":"これは帰無仮説です。"},
+          {"text":"コインの表が出る確率は0.65である","Ur":false,"w8":"これは観測された結果であり、仮説ではありません。"},
+          {"text":"コインは歪んでいる","Ur":false,"w8":"「表が出やすい」という方向まで含めて設定するのがより適切です。"}]}
+      ]};
+
+    const questions = quizDataJson.Qm;
+    const quizContainer = document.getElementById('quiz-container');
+    const resultsContainer = document.getElementById('results-container');
+    const questionTextEl = document.getElementById('question-text');
+    const answerButtonsEl = document.getElementById('answer-buttons');
+    const feedbackContainer = document.getElementById('feedback-container');
+    const feedbackTextEl = document.getElementById('feedback-text');
+    const nextBtn = document.getElementById('next-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const progressTextEl = document.getElementById('progress-text');
+    const progressBarEl = document.getElementById('progress-bar');
+    const scoreTextEl = document.getElementById('score-text');
+    const resultsSummaryEl = document.getElementById('results-summary');
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let userAnswers = [];
+
+    /** 配列をシャッフルする (Fisher-Yates algorithm) */
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    // MathJax startup.ready から呼ばれる
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      userAnswers = [];
+      quizContainer.classList.remove('hidden');
+      resultsContainer.classList.add('hidden');
+      nextBtn.classList.add('hidden');
+      showQuestion();
+    }
+
+    function showQuestion() {
+      resetState();
+      const currentQuestion = questions[currentQuestionIndex];
+
+      progressTextEl.textContent = `問題 ${currentQuestionIndex + 1} / ${questions.length}`;
+      progressBarEl.style.width = `${((currentQuestionIndex) / questions.length) * 100}%`;
+
+      // TeXを解釈させるために innerHTML を使用
+      questionTextEl.innerHTML = currentQuestion.question;
+
+      // 選択肢をシャッフルしてから表示
+      const shuffledAnswers = shuffleArray([...currentQuestion.EE]);
+
+      shuffledAnswers.forEach(answer => {
+        const button = document.createElement('button');
+        button.innerHTML = answer.text;
+        button.className =
+          'answer-btn w-full p-4 border border-gray-300 rounded-lg text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed';
+        button.dataset.correct = String(answer.Ur);
+        button.dataset.rationale = answer.w8;
+        button.addEventListener('click', selectAnswer);
+        answerButtonsEl.appendChild(button);
+      });
+
+      renderMath();
+    }
+
+    function resetState() {
+      feedbackContainer.classList.add('hidden');
+      nextBtn.classList.add('hidden');
+      while (answerButtonsEl.firstChild) answerButtonsEl.removeChild(answerButtonsEl.firstChild);
+    }
+
+    function selectAnswer(e) {
+      const selectedBtn = e.target.closest('.answer-btn');
+      if (!selectedBtn) return;
+
+      const isCorrect = selectedBtn.dataset.correct === 'true';
+      const rationale = selectedBtn.dataset.rationale;
+
+      userAnswers.push({
+        question: questions[currentQuestionIndex].question,
+        selected: selectedBtn.innerHTML,
+        isCorrect,
+        correctAnswer: questions[currentQuestionIndex].EE.find(ans => ans.Ur).text
+      });
+
+      if (isCorrect) {
+        score++;
+        selectedBtn.classList.add('bg-green-100','border-green-500','ring-2','ring-green-400');
+        feedbackContainer.classList.remove('bg-red-100','text-red-700');
+        feedbackContainer.classList.add('bg-green-100','text-green-700');
+      } else {
+        selectedBtn.classList.add('bg-red-100','border-red-500','ring-2','ring-red-400');
+        feedbackContainer.classList.remove('bg-green-100','text-green-700');
+        feedbackContainer.classList.add('bg-red-100','text-red-700');
+      }
+
+      feedbackTextEl.innerHTML = rationale;
+      feedbackContainer.classList.remove('hidden');
+      renderMath();
+
+      Array.from(answerButtonsEl.children).forEach(button => {
+        if (button.dataset.correct === 'true') button.classList.add('bg-green-100','border-green-500');
+        button.disabled = true;
+      });
+
+      progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+
+      nextBtn.textContent = (questions.length > currentQuestionIndex + 1) ? '次の問題へ' : '結果を見る';
+      nextBtn.classList.remove('hidden');
+    }
+
+    function showResults() {
+      quizContainer.classList.add('hidden');
+      resultsContainer.classList.remove('hidden');
+      scoreTextEl.textContent = `${questions.length}問中${score}問正解！`;
+
+      resultsSummaryEl.innerHTML = '';
+      userAnswers.forEach((ans, i) => {
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-lg border ${ans.isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`;
+        div.innerHTML = `
+          <p class="font-semibold text-gray-800">問題 ${i + 1}: ${ans.question}</p>
+          <p class="mt-2 text-sm ${ans.isCorrect ? 'text-green-800' : 'text-red-800'}">あなたの回答: ${ans.selected}</p>
+          ${!ans.isCorrect ? `<p class="mt-1 text-sm text-blue-800">正解: ${ans.correctAnswer}</p>` : ''}`;
+        resultsSummaryEl.appendChild(div);
+      });
+      renderMath();
+    }
+
+    function handleNext() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function renderMath() {
+      // MathJax v3
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+    }
+
+    nextBtn.addEventListener('click', handleNext);
+    restartBtn.addEventListener('click', () => startQuiz());
+  </script>
+</body>
+</html>
+
