@@ -78,4 +78,177 @@
           {"text":"$\\sqrt{49}$","Ur":false,"w8":"$\\sqrt{49}$ は7なので、有理数です。"},
           {"text":"$0.3$","Ur":false,"w8":"$0.3$ は $\\frac{3}{10}$ という分数で表せるので、有理数です。"},
           {"text":"$\\pi$","Ur":true,"w8":"正解です。円周率 $\\pi$ は分数で表すことのできない無理数です。"},
-          {"t
+          {"text":"$\\frac{2}{3}$","Ur":false,"w8":"これは分数の形なので、有理数です。"}]},
+        {"question":"$\\sqrt{50}$ を簡単にしなさい。","hint":"ルートの中の数を素因数分解し、2乗のペアをルートの外に出しましょう。","EE":[
+          {"text":"$2\\sqrt{5}$","Ur":false,"w8":"惜しい！$50 = 2 \\times 5^2$ です。"},
+          {"text":"$5\\sqrt{2}$","Ur":true,"w8":"正解です。$\\sqrt{50} = \\sqrt{5^2 \\times 2} = 5\\sqrt{2}$ となります。"},
+          {"text":"$10\\sqrt{5}$","Ur":false,"w8":"ルートの中の数の分解が間違っています。"},
+          {"text":"これ以上簡単にできない","Ur":false,"w8":"$50$ は $25 \\times 2$ なので、まだ簡単にできます。"}]},
+        {"question":"次の式を計算しなさい。 $3\\sqrt{2} + 5\\sqrt{2}$","hint":"ルートの中が同じ数は、文字式のように係数だけを計算できます。","EE":[
+          {"text":"$8\\sqrt{4}$","Ur":false,"w8":"ルートの中の数は足し算しません。係数だけを計算します。"},
+          {"text":"$8\\sqrt{2}$","Ur":true,"w8":"正解です。$(3+5)\\sqrt{2} = 8\\sqrt{2}$ となります。"},
+          {"text":"$15\\sqrt{2}$","Ur":false,"w8":"これは足し算ではなく、掛け算の計算です。"},
+          {"text":"$15\\sqrt{4}$","Ur":false,"w8":"係数の計算とルートの中の計算、両方が間違っています。"}]},
+        {"question":"次の式を計算しなさい。 $\\sqrt{3} \\times \\sqrt{12}$","hint":"ルート同士の掛け算は、ルートの中の数を掛けてから簡単にします。$\\sqrt{a} \\times \\sqrt{b} = \\sqrt{ab}$","EE":[
+          {"text":"$\\sqrt{15}$","Ur":false,"w8":"ルートの中の数は足し算ではなく掛け算です。"},
+          {"text":"$6$","Ur":true,"w8":"正解です。$\\sqrt{3 \\times 12} = \\sqrt{36} = 6$ となります。"},
+          {"text":"$3\\sqrt{4}$","Ur":false,"w8":"計算の途中で誤りがあります。"},
+          {"text":"$4\\sqrt{3}$","Ur":false,"w8":"$\\sqrt{12}$ を $2\\sqrt{3}$ にしてから計算すると、$\\sqrt{3} \\times 2\\sqrt{3} = 2 \\times 3 = 6$ です。"}]},
+        {"question":"$\\frac{2}{\\sqrt{3}}$ の分母を有理化しなさい。","hint":"分母と分子に、分母と同じルートの数を掛けます。","EE":[
+          {"text":"$\\frac{2\\sqrt{3}}{3}$","Ur":true,"w8":"正解です。分母と分子に $\\sqrt{3}$ を掛けています。"},
+          {"text":"$\\frac{\\sqrt{6}}{3}$","Ur":false,"w8":"分子の計算が間違っています。$2 \\times \\sqrt{3}$ です。"},
+          {"text":"$2\\sqrt{3}$","Ur":false,"w8":"分母が消えてしまっています。"},
+          {"text":"$\\frac{2}{3}$","Ur":false,"w8":"ルートが消えてしまっています。有理化の手順を確認しましょう。"}]},
+        {"question":"次の式を展開しなさい。 $(\\sqrt{5} + \\sqrt{2})^2$","hint":"乗法公式 $(x+y)^2 = x^2 + 2xy + y^2$ を利用しましょう。","EE":[
+          {"text":"$7$","Ur":false,"w8":"真ん中の $2xy$ の項が抜けています。$(\\sqrt{5})^2 + (\\sqrt{2})^2$ だけではありません。"},
+          {"text":"$7 + \\sqrt{10}$","Ur":false,"w8":"惜しい！真ん中の項は $2\\sqrt{5}\\sqrt{2}$ です。"},
+          {"text":"$5 + 2\\sqrt{10}$","Ur":false,"w8":"$(\\sqrt{2})^2$ の計算が抜けています。"},
+          {"text":"$7 + 2\\sqrt{10}$","Ur":true,"w8":"正解です。$(\\sqrt{5})^2 + 2 \\times \\sqrt{5} \\times \\sqrt{2} + (\\sqrt{2})^2 = 5 + 2\\sqrt{10} + 2$ となります。"}]},
+        {"question":"次の式を計算しなさい。 $\\sqrt{48} - \\sqrt{27}$","hint":"それぞれのルートをまず簡単にし、ルートの中を同じ数にしてから計算します。","EE":[
+          {"text":"$\\sqrt{21}$","Ur":false,"w8":"ルートの中の数を直接引き算することはできません。"},
+          {"text":"$7\\sqrt{3}$","Ur":false,"w8":"これは引き算ではなく足し算の結果です。"},
+          {"text":"$\\sqrt{3}$","Ur":true,"w8":"正解です。$\\sqrt{48} = 4\\sqrt{3}$、$\\sqrt{27} = 3\\sqrt{3}$ なので、$4\\sqrt{3} - 3\\sqrt{3} = \\sqrt{3}$ です。"},
+          {"text":"$2\\sqrt{3}$","Ur":false,"w8":"ルートの簡略化か、最後の引き算で計算ミスがあります。"}]},
+        {"question":"次の数の中から、有理数を選びなさい。","hint":"有理数とは、整数や分数で表すことができる数です。ルートが残らないものを探しましょう。","EE":[
+          {"text":"$\\sqrt{2}$","Ur":false,"w8":"$\\sqrt{2}$ はルートが外れないので無理数です。"},
+          {"text":"$\\sqrt{9}$","Ur":true,"w8":"正解です。$\\sqrt{9} = 3$ なので、有理数です。"},
+          {"text":"$\\sqrt{10}$","Ur":false,"w8":"$\\sqrt{10}$ はルートが外れないので無理数です。"},
+          {"text":"$-\\sqrt{3}$","Ur":false,"w8":"$-\\sqrt{3}$ はルートが外れないので無理数です。"}]}
+      ]};
+
+    const questions = quizDataJson.Qm;
+    const quizContainer = document.getElementById('quiz-container');
+    const resultsContainer = document.getElementById('results-container');
+    const questionTextEl = document.getElementById('question-text');
+    const answerButtonsEl = document.getElementById('answer-buttons');
+    const feedbackContainer = document.getElementById('feedback-container');
+    const feedbackTextEl = document.getElementById('feedback-text');
+    const nextBtn = document.getElementById('next-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const progressTextEl = document.getElementById('progress-text');
+    const progressBarEl = document.getElementById('progress-bar');
+    const scoreTextEl = document.getElementById('score-text');
+    const resultsSummaryEl = document.getElementById('results-summary');
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let userAnswers = [];
+
+    // MathJax startup.ready から呼ばれる
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      userAnswers = [];
+      quizContainer.classList.remove('hidden');
+      resultsContainer.classList.add('hidden');
+      nextBtn.classList.add('hidden');
+      showQuestion();
+    }
+
+    function showQuestion() {
+      resetState();
+      const currentQuestion = questions[currentQuestionIndex];
+
+      progressTextEl.textContent = `問題 ${currentQuestionIndex + 1} / ${questions.length}`;
+      progressBarEl.style.width = `${((currentQuestionIndex) / questions.length) * 100}%`;
+
+      // TeXを解釈させるために innerHTML を使用
+      questionTextEl.innerHTML = currentQuestion.question;
+
+      currentQuestion.EE.forEach(answer => {
+        const button = document.createElement('button');
+        button.innerHTML = answer.text;                 // ← ここも innerHTML
+        button.className =
+          'answer-btn w-full p-4 border border-gray-300 rounded-lg text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed';
+        button.dataset.correct = String(answer.Ur);
+        button.dataset.rationale = answer.w8;
+        button.addEventListener('click', selectAnswer);
+        answerButtonsEl.appendChild(button);
+      });
+
+      renderMath();
+    }
+
+    function resetState() {
+      feedbackContainer.classList.add('hidden');
+      nextBtn.classList.add('hidden');
+      while (answerButtonsEl.firstChild) answerButtonsEl.removeChild(answerButtonsEl.firstChild);
+    }
+
+    function selectAnswer(e) {
+      const selectedBtn = e.target.closest('.answer-btn');
+      if (!selectedBtn) return;
+
+      const isCorrect = selectedBtn.dataset.correct === 'true';
+      const rationale = selectedBtn.dataset.rationale;
+
+      userAnswers.push({
+        question: questions[currentQuestionIndex].question,
+        selected: selectedBtn.innerHTML,
+        isCorrect,
+        correctAnswer: questions[currentQuestionIndex].EE.find(ans => ans.Ur).text
+      });
+
+      if (isCorrect) {
+        score++;
+        selectedBtn.classList.add('bg-green-100','border-green-500','ring-2','ring-green-400');
+        feedbackContainer.classList.remove('bg-red-100','text-red-700');
+        feedbackContainer.classList.add('bg-green-100','text-green-700');
+      } else {
+        selectedBtn.classList.add('bg-red-100','border-red-500','ring-2','ring-red-400');
+        feedbackContainer.classList.remove('bg-green-100','text-green-700');
+        feedbackContainer.classList.add('bg-red-100','text-red-700');
+      }
+
+      feedbackTextEl.innerHTML = rationale;
+      feedbackContainer.classList.remove('hidden');
+      renderMath();
+
+      Array.from(answerButtonsEl.children).forEach(button => {
+        if (button.dataset.correct === 'true') button.classList.add('bg-green-100','border-green-500');
+        button.disabled = true;
+      });
+
+      progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+
+      nextBtn.textContent = (questions.length > currentQuestionIndex + 1) ? '次の問題へ' : '結果を見る';
+      nextBtn.classList.remove('hidden');
+    }
+
+    function showResults() {
+      quizContainer.classList.add('hidden');
+      resultsContainer.classList.remove('hidden');
+      scoreTextEl.textContent = `${questions.length}問中${score}問正解！`;
+
+      resultsSummaryEl.innerHTML = '';
+      userAnswers.forEach((ans, i) => {
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-lg border ${ans.isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`;
+        div.innerHTML = `
+          <p class="font-semibold text-gray-800">問題 ${i + 1}: ${ans.question}</p>
+          <p class="mt-2 text-sm ${ans.isCorrect ? 'text-green-800' : 'text-red-800'}">あなたの回答: ${ans.selected}</p>
+          ${!ans.isCorrect ? `<p class="mt-1 text-sm text-blue-800">正解: ${ans.correctAnswer}</p>` : ''}`;
+        resultsSummaryEl.appendChild(div);
+      });
+      renderMath();
+    }
+
+    function handleNext() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function renderMath() {
+      // MathJax v3
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+    }
+
+    nextBtn.addEventListener('click', handleNext);
+    restartBtn.addEventListener('click', () => startQuiz());
+  </script>
+</body>
+</html>
