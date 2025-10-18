@@ -104,16 +104,26 @@
           {"text":"$-\\frac{\\sqrt{3}}{2}$","Ur":false,"w8":"第2象限ではサインの値は正になります。"},
           {"text":"$\\frac{1}{2}$","Ur":false,"w8":"それは $\\sin 30^\\circ$ の値です。"},
           {"text":"$-\\frac{1}{2}$","Ur":false,"w8":"それは $\\cos 120^\\circ$ の値です。"}]},
-        {"question":"$\\triangle ABC$ において、$a=3, b=5, C=60^\\circ$ のとき、辺$c$の長さを求めなさい。","hint":"2辺とその間の角がわかっている場合、余弦定理を使います。$c^2 = a^2 + b^2 - 2ab \\cos C$","EE":[
-          {"text":"$\\sqrt{19}$","Ur":true,"w8":"正解です。$c^2 = 3^2 + 5^2 - 2 \\cdot 3 \\cdot 5 \\cos 60^\\circ = 9+25-30 \\cdot \\frac{1}{2} = 19$ より、$c=\\sqrt{19}$ です。"},
-          {"text":"$7$","Ur":false,"w8":"余弦定理の最後の項 $-2ab \\cos C$ を足してしまっているか、計算ミスがあります。"},
-          {"text":"$\\sqrt{49}$","Ur":false,"w8":"これは7と同じ値です。計算ミスがあります。"},
-          {"text":"$19$","Ur":false,"w8":"それは $c^2$ の値です。$c$ の値を求めるのを忘れないようにしましょう。"}]},
-        {"question":"$\\triangle ABC$ において、$a=8, A=45^\\circ, B=60^\\circ$ のとき、辺$b$の長さを求めなさい。","hint":"1辺と2つの角がわかっている場合、正弦定理を使います。$\\frac{a}{\\sin A} = \\frac{b}{\\sin B}$","EE":[
-          {"text":"$4\\sqrt{3}$","Ur":false,"w8":"計算の過程で分母分子が逆になっている可能性があります。"},
-          {"text":"$8\\sqrt{2}$","Ur":false,"w8":"計算の過程で $\\sin 45^\\circ$ や $\\sin 60^\\circ$ の値を取り違えている可能性があります。"},
-          {"text":"$4\\sqrt{6}$","Ur":true,"w8":"正解です。$\\frac{8}{\\sin 45^\\circ} = \\frac{b}{\\sin 60^\\circ}$ より、$b = \\frac{8 \\sin 60^\\circ}{\\sin 45^\\circ} = \\frac{8 \\cdot \\frac{\\sqrt{3}}{2}}{\\frac{1}{\\sqrt{2}}} = 4\\sqrt{3} \\cdot \\sqrt{2} = 4\\sqrt{6}$ です。"},
-          {"text":"$8\\sqrt{3}$","Ur":false,"w8":"計算の過程で $\\sin 45^\\circ$ や $\\sin 60^\\circ$ の値を取り違えている可能性があります。"}]}
+        {"question":"$\\cos 135^\\circ$ の値を求めなさい。","hint":"$135^\\circ$ は $180^\\circ - 45^\\circ$ と考えられます。公式 $\\cos(180^\\circ - \\theta) = -\\cos \\theta$ を使いましょう。","EE":[
+          {"text":"$-\\frac{1}{\\sqrt{2}}$","Ur":true,"w8":"正解です。$\\cos 135^\\circ = \\cos(180^\\circ - 45^\\circ) = -\\cos 45^\\circ = -\\frac{1}{\\sqrt{2}}$ です。"},
+          {"text":"$\\frac{1}{\\sqrt{2}}$","Ur":false,"w8":"第2象限ではコサインの値は負になります。符号に注意しましょう。"},
+          {"text":"$-\\frac{\\sqrt{3}}{2}$","Ur":false,"w8":"それは $\\cos 150^\\circ$ の値です。"},
+          {"text":"$\\frac{\\sqrt{3}}{2}$","Ur":false,"w8":"それは $\\cos 30^\\circ$ の値です。"}]},
+        {"question":"$0^\\circ < \\theta < 90^\\circ$ で $\\sin\\theta = \\frac{3}{5}$ のとき、$\\cos\\theta$ の値を求めなさい。","hint":"$\\sin^2 \\theta + \\cos^2 \\theta = 1$ を利用します。$0^\\circ < \\theta < 90^\\circ$ なので $\\cos\\theta > 0$ です。","EE":[
+          {"text":"$\\frac{4}{5}$","Ur":true,"w8":"正解です。$\\cos^2 \\theta = 1 - (\\frac{3}{5})^2 = \\frac{16}{25}$ となり、$\\cos\\theta > 0$ なので $\\cos\\theta = \\frac{4}{5}$ です。"},
+          {"text":"$-\\frac{4}{5}$","Ur":false,"w8":"角度の範囲が $0^\\circ < \\theta < 90^\\circ$ なので、コサインの値は正になります。"},
+          {"text":"$\\frac{3}{5}$","Ur":false,"w8":"それはサインの値です。相互関係の公式を使いましょう。"},
+          {"text":"$\\frac{5}{4}$","Ur":false,"w8":"計算が間違っています。斜辺が5の直角三角形を考えてみましょう。"}]},
+        {"question":"$\\tan 150^\\circ$ の値を求めなさい。","hint":"$150^\\circ$ は $180^\\circ - 30^\\circ$ と考えられます。公式 $\\tan(180^\\circ - \\theta) = -\\tan \\theta$ を使いましょう。","EE":[
+          {"text":"$-\\sqrt{3}$","Ur":false,"w8":"それは $\\tan 120^\\circ$ の値です。"},
+          {"text":"$\\sqrt{3}$","Ur":false,"w8":"第2象限ではタンジェントの値は負になります。"},
+          {"text":"$-\\frac{1}{\\sqrt{3}}$","Ur":true,"w8":"正解です。$\\tan 150^\\circ = \\tan(180^\\circ - 30^\\circ) = -\\tan 30^\\circ = -\\frac{1}{\\sqrt{3}}$ です。"},
+          {"text":"$\\frac{1}{\\sqrt{3}}$","Ur":false,"w8":"第2象限ではタンジェントの値は負になります。符号に注意しましょう。"}]},
+        {"question":"$90^\\circ < \\theta < 180^\\circ$ で $\\cos\\theta = -\\frac{4}{5}$ のとき、$\\tan\\theta$ の値を求めなさい。","hint":"まず $\\sin\\theta$ を求め、次に $\\tan\\theta = \\frac{\\sin\\theta}{\\cos\\theta}$ を計算します。$90^\\circ < \\theta < 180^\\circ$ では $\\sin\\theta > 0$ です。","EE":[
+          {"text":"$-\\frac{3}{4}$","Ur":true,"w8":"正解です。$\\sin^2\\theta = 1 - (-\\frac{4}{5})^2 = \\frac{9}{25}$ より $\\sin\\theta = \\frac{3}{5}$。よって $\\tan\\theta = \\frac{3/5}{-4/5} = -\\frac{3}{4}$ です。"},
+          {"text":"$\\frac{3}{4}$","Ur":false,"w8":"第2象限ではタンジェントの値は負になります。"},
+          {"text":"$-\\frac{4}{3}$","Ur":false,"w8":"分子と分母が逆です。$\\tan\\theta = \\frac{\\sin\\theta}{\\cos\\theta}$ です。"},
+          {"text":"$\\frac{4}{3}$","Ur":false,"w8":"符号と、分子・分母の両方が間違っています。"}]}
       ]};
 
     const questions = quizDataJson.Qm;
