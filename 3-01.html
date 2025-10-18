@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>高校数学I：二次関数とそのグラフドリル</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- MathJax の設定は読み込み前に置く（超重要） -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[','\\]']]
+      },
+      startup: {
+        ready: () => {
+          // 既定の初期化
+          MathJax.startup.defaultReady();
+          // クイズ本体を表示して開始
+          document.getElementById('quiz-container')?.classList.remove('mathjax-loading');
+          startQuiz();
+        }
+      }
+    };
+  </script>
+  <!-- 必要な polyfill（古めのブラウザ対策）-->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <!-- MathJax v3 本体（asyncでOK。ただし上の設定を先に定義しておくこと）-->
+  <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+    .answer-btn { transition: all 0.2s ease-in-out; }
+    .answer-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .mathjax-loading { visibility: hidden; } /* MathJax準備完了まで非表示 */
+  </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+  <div id="quiz-container" class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 md:p-8 mathjax-loading">
+    <div id="progress-container" class="flex justify-between items-center mb-4">
+      <h2 class="text-xl md:text-2xl font-bold text-gray-800">二次関数とそのグラフドリル</h2>
+      <div id="progress-text" class="text-sm font-semibold text-gray-600"></div>
+    </div>
+
+    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+      <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+    </div>
+
+    <div id="question-card">
+      <p id="question-text" class="text-lg md:text-xl text-gray-900 mb-6 min-h-[60px]"></p>
+      <div id="answer-buttons" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+    </div>
+
+    <div id="feedback-container" class="mt-6 p-4 rounded-lg text-center hidden">
+      <p id="feedback-text" class="font-semibold"></p>
+    </div>
+
+    <div class="mt-6 flex justify-end">
+      <button id="next-btn" class="hidden bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-200">次へ</button>
+    </div>
+  </div>
+
+  <div id="results-container" class="hidden w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 md:p-8 text-center">
+    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">終了！</h2>
+    <p id="score-text" class="text-xl text-gray-700 mb-6"></p>
+    <div id="results-summary" class="text-left space-y-4 mb-8"></div>
+    <button id="restart-btn" class="bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition duration-200">もう一度挑戦する</button>
+  </div>
+
+  <script>
+    // ==== データ ====
+    const quizDataJson = {
+      "Qm": [
+        {"question":"2次関数 $y = 2(x-3)^2 + 5$ の頂点の座標を求めなさい。","hint":"$y=a(x-p)^2+q$ の形のとき、頂点は $(p, q)$ です。符号に注意しましょう。","EE":[
+          {"text":"$(3, 5)$","Ur":true,"w8":"正解です。$x-3=0$ となるxの値と、そのときのyの値を考えます。"},
+          {"text":"$(-3, 5)$","Ur":false,"w8":"$x$座標の符号が逆です。$x-p$ の形なので、$p=3$ です。"},
+          {"text":"$(3, -5)$","Ur":false,"w8":"$y$座標の符号が逆です。$+q$ の形なので、$q=5$ です。"},
+          {"text":"$(2, 5)$","Ur":false,"w8":"$x^2$の係数は頂点の座標には直接関係ありません。"}]},
+        {"question":"2次関数 $y = x^2 - 4x + 1$ の頂点の座標を求めなさい。","hint":"式を $y=a(x-p)^2+q$ の形に変形（平方完成）します。","EE":[
+          {"text":"$(2, -3)$","Ur":true,"w8":"正解です。$y=(x-2)^2-4+1=(x-2)^2-3$ と変形できます。"},
+          {"text":"$(-2, 1)$","Ur":false,"w8":"平方完成の途中で符号のミスがあるようです。"},
+          {"text":"$(2, 1)$","Ur":false,"w8":"平方完成で追加した項を引くのを忘れていませんか？"},
+          {"text":"$(4, 1)$","Ur":false,"w8":"式の係数をそのまま頂点の座標とすることはできません。"}]},
+        {"question":"2次関数 $y = -3(x+1)^2 - 4$ のグラフの軸の方程式を求めなさい。","hint":"軸の方程式は、頂点の$x$座標から $x=p$ と表されます。","EE":[
+          {"text":"$x = -1$","Ur":true,"w8":"正解です。頂点の$x$座標は $-1$ です。"},
+          {"text":"$x = 1$","Ur":false,"w8":"頂点の$x$座標の符号が違います。$x+1$ なので $p=-1$ です。"},
+          {"text":"$y = -1$","Ur":false,"w8":"軸は$x$の値が一定の直線なので、$x=$ の形で表されます。"},
+          {"text":"$y = -4$","Ur":false,"w8":"それは頂点の$y$座標です。軸の方程式ではありません。"}]},
+        {"question":"2次関数 $y = -x^2 + 6x - 5$ の最大値または最小値を求めなさい。","hint":"平方完成して頂点のy座標を求めます。$x^2$の係数が負なので、グラフは上に凸です。","EE":[
+          {"text":"最大値 $4$","Ur":true,"w8":"正解です。$y=-(x-3)^2+4$ と変形でき、上に凸のグラフなので頂点で最大値をとります。"},
+          {"text":"最小値 $4$","Ur":false,"w8":"$x^2$の係数が負なので、グラフは上に凸、つまり最大値を持ちます。"},
+          {"text":"最大値 $-5$","Ur":false,"w8":"それはy切片の値です。頂点の座標を求める必要があります。"},
+          {"text":"最小値なし","Ur":false,"w8":"最大値はありますが、最小値はありません。"}]},
+        {"question":"2次関数 $y=3x^2$ のグラフをx軸方向に-2、y軸方向に1だけ平行移動したグラフの式を求めなさい。","hint":"$x$を$x-(-2)$に、$y$を$y-1$に置き換えると考えます。","EE":[
+          {"text":"$y=3(x+2)^2+1$","Ur":true,"w8":"正解です。頂点が $(0,0)$ から $(-2,1)$ に移動します。"},
+          {"text":"$y=3(x-2)^2+1$","Ur":false,"w8":"x軸方向の移動量の符号が逆です。"},
+          {"text":"$y=3(x+2)^2-1$","Ur":false,"w8":"y軸方向の移動量の符号が逆です。"},
+          {"text":"$y=3(x-2)^2-1$","Ur":false,"w8":"x軸、y軸両方の移動量の符号が逆です。"}]},
+        {"question":"2次関数 $y = 2x^2 + 3x - 7$ のグラフがy軸と交わる点のy座標を求めなさい。","hint":"グラフがy軸と交わる点では、$x$座標は常に0です。","EE":[
+          {"text":"$-7$","Ur":true,"w8":"正解です。式に $x=0$ を代入すると $y=-7$ となります。"},
+          {"text":"$2$","Ur":false,"w8":"それは $x^2$ の係数です。"},
+          {"text":"$3$","Ur":false,"w8":"それは $x$ の係数です。"},
+          {"text":"$0$","Ur":false,"w8":"$x=0$ を代入したときの $y$ の値を求めます。"}]},
+        {"question":"2次関数 $y = x^2 - x - 6$ のグラフとx軸との交点のx座標をすべて求めなさい。","hint":"グラフがx軸と交わる点では、$y$座標は常に0です。二次方程式を解きましょう。","EE":[
+          {"text":"$x=-2, 3$","Ur":true,"w8":"正解です。$x^2-x-6=0$ を因数分解すると $(x-3)(x+2)=0$ となります。"},
+          {"text":"$x=2, -3$","Ur":false,"w8":"因数分解したときの符号が逆になっています。"},
+          {"text":"$x=1, -6$","Ur":false,"w8":"足して-1、掛けて-6になる組み合わせを探しましょう。"},
+          {"text":"$x=-1, 6$","Ur":false,"w8":"足して-1、掛けて-6になる組み合わせを探しましょう。"}]},
+        {"question":"頂点が $(1, 2)$ で、点 $(3, 10)$ を通る2次関数の式を求めなさい。","hint":"頂点の座標から $y=a(x-1)^2+2$ とおき、通る点の座標を代入して$a$を求めます。","EE":[
+          {"text":"$y=2(x-1)^2+2$","Ur":true,"w8":"正解です。$10=a(3-1)^2+2$ を解くと $a=2$ となります。"},
+          {"text":"$y=(x-1)^2+2$","Ur":false,"w8":"$a=1$ とは限りません。通る点の座標を代入して $a$ の値を求める必要があります。"},
+          {"text":"$y=2(x+1)^2+2$","Ur":false,"w8":"頂点のx座標の符号が間違っています。"},
+          {"text":"$y=4(x-1)^2+2$","Ur":false,"w8":"$a$ の値が間違っています。方程式を正しく解きましょう。"}]}
+      ]};
+
+    const questions = quizDataJson.Qm;
+    const quizContainer = document.getElementById('quiz-container');
+    const resultsContainer = document.getElementById('results-container');
+    const questionTextEl = document.getElementById('question-text');
+    const answerButtonsEl = document.getElementById('answer-buttons');
+    const feedbackContainer = document.getElementById('feedback-container');
+    const feedbackTextEl = document.getElementById('feedback-text');
+    const nextBtn = document.getElementById('next-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const progressTextEl = document.getElementById('progress-text');
+    const progressBarEl = document.getElementById('progress-bar');
+    const scoreTextEl = document.getElementById('score-text');
+    const resultsSummaryEl = document.getElementById('results-summary');
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let userAnswers = [];
+
+    // MathJax startup.ready から呼ばれる
+    function startQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      userAnswers = [];
+      quizContainer.classList.remove('hidden');
+      resultsContainer.classList.add('hidden');
+      nextBtn.classList.add('hidden');
+      showQuestion();
+    }
+
+    function showQuestion() {
+      resetState();
+      const currentQuestion = questions[currentQuestionIndex];
+
+      progressTextEl.textContent = `問題 ${currentQuestionIndex + 1} / ${questions.length}`;
+      progressBarEl.style.width = `${((currentQuestionIndex) / questions.length) * 100}%`;
+
+      // TeXを解釈させるために innerHTML を使用
+      questionTextEl.innerHTML = currentQuestion.question;
+
+      currentQuestion.EE.forEach(answer => {
+        const button = document.createElement('button');
+        button.innerHTML = answer.text;               // ← ここも innerHTML
+        button.className =
+          'answer-btn w-full p-4 border border-gray-300 rounded-lg text-left hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed';
+        button.dataset.correct = String(answer.Ur);
+        button.dataset.rationale = answer.w8;
+        button.addEventListener('click', selectAnswer);
+        answerButtonsEl.appendChild(button);
+      });
+
+      renderMath();
+    }
+
+    function resetState() {
+      feedbackContainer.classList.add('hidden');
+      nextBtn.classList.add('hidden');
+      while (answerButtonsEl.firstChild) answerButtonsEl.removeChild(answerButtonsEl.firstChild);
+    }
+
+    function selectAnswer(e) {
+      const selectedBtn = e.target.closest('.answer-btn');
+      if (!selectedBtn) return;
+
+      const isCorrect = selectedBtn.dataset.correct === 'true';
+      const rationale = selectedBtn.dataset.rationale;
+
+      userAnswers.push({
+        question: questions[currentQuestionIndex].question,
+        selected: selectedBtn.innerHTML,
+        isCorrect,
+        correctAnswer: questions[currentQuestionIndex].EE.find(ans => ans.Ur).text
+      });
+
+      if (isCorrect) {
+        score++;
+        selectedBtn.classList.add('bg-green-100','border-green-500','ring-2','ring-green-400');
+        feedbackContainer.classList.remove('bg-red-100','text-red-700');
+        feedbackContainer.classList.add('bg-green-100','text-green-700');
+      } else {
+        selectedBtn.classList.add('bg-red-100','border-red-500','ring-2','ring-red-400');
+        feedbackContainer.classList.remove('bg-green-100','text-green-700');
+        feedbackContainer.classList.add('bg-red-100','text-red-700');
+      }
+
+      feedbackTextEl.innerHTML = rationale;
+      feedbackContainer.classList.remove('hidden');
+      renderMath();
+
+      Array.from(answerButtonsEl.children).forEach(button => {
+        if (button.dataset.correct === 'true') button.classList.add('bg-green-100','border-green-500');
+        button.disabled = true;
+      });
+
+      progressBarEl.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+
+      nextBtn.textContent = (questions.length > currentQuestionIndex + 1) ? '次の問題へ' : '結果を見る';
+      nextBtn.classList.remove('hidden');
+    }
+
+    function showResults() {
+      quizContainer.classList.add('hidden');
+      resultsContainer.classList.remove('hidden');
+      scoreTextEl.textContent = `${questions.length}問中${score}問正解！`;
+
+      resultsSummaryEl.innerHTML = '';
+      userAnswers.forEach((ans, i) => {
+        const div = document.createElement('div');
+        div.className = `p-3 rounded-lg border ${ans.isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`;
+        div.innerHTML = `
+          <p class="font-semibold text-gray-800">問題 ${i + 1}: ${ans.question}</p>
+          <p class="mt-2 text-sm ${ans.isCorrect ? 'text-green-800' : 'text-red-800'}">あなたの回答: ${ans.selected}</p>
+          ${!ans.isCorrect ? `<p class="mt-1 text-sm text-blue-800">正解: ${ans.correctAnswer}</p>` : ''}`;
+        resultsSummaryEl.appendChild(div);
+      });
+      renderMath();
+    }
+
+    function handleNext() {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < questions.length) {
+        showQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function renderMath() {
+      // MathJax v3
+      if (window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise();
+    }
+
+    nextBtn.addEventListener('click', handleNext);
+    restartBtn.addEventListener('click', () => startQuiz());
+  </script>
+</body>
+</html>
+
